@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KEEP by AIFP - See what you actually keep</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F3864">
+<meta name="description" content="KEEP by AI Finance Partners. A free UK take home pay calculator with Director mode, pension tax relief, and the marginal tax rate trap, on 2026/27 rules. Nothing leaves your device.">
+<style>
+:root{--navy:#1F3864;--navy-d:#132245;--blue:#2E75B6;--gold:#C9A227;--gold-d:#a3821b;--gold-bg:#FBF4DA;--bg:#F5F7FA;--card:#FFF;--border:#E1E5EB;--border-d:#CBD2DA;--line:#E1E5EB;--text:#1F2937;--muted:#6B7280;--green:#10B981;--green-bg:#D1FAE5;--amber:#F59E0B;--amber-bg:#FEF3C7;--red:#EF4444;--red-bg:#FEE2E2;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:14px;line-height:1.55;color:var(--text);background:var(--bg)}
+button,input,select{font-family:inherit}
+h1,h2,h3{color:var(--navy);font-weight:bold;margin:0}
+h1{font-size:23px}h2{font-size:18px}h3{font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+header{background:var(--navy);color:#fff;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:50}
+.head-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 18px}
+.keep-logo{font-weight:bold;letter-spacing:1px;font-size:20px;white-space:nowrap}
+.keep-logo .k{color:var(--gold)}.keep-logo .rest{color:#fff}
+.head-by{color:rgba(255,255,255,0.65);font-size:12px;font-weight:bold}
+.head-tag{color:rgba(255,255,255,0.7);font-size:12px}
+.head-right{margin-left:auto}
+.privacy-toggle{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.28);color:#fff;height:34px;padding:0 11px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:bold;transition:background .15s}
+.privacy-toggle:hover{background:rgba(255,255,255,0.22)}
+.privacy-toggle.on{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.privacy-toggle svg{width:18px;height:18px;display:block}
+main{padding:20px 0 60px}
+.intro{background:var(--gold-bg);border-left:5px solid var(--gold);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+.intro p{margin:4px 0;font-size:13.5px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(31,56,100,0.04),0 2px 8px rgba(31,56,100,0.04)}
+.crumb{font-size:11px;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:130px;background:#fff;border:1px solid var(--border-d);color:var(--navy);padding:11px 12px;border-radius:8px;font-weight:bold;font-size:13.5px;cursor:pointer;transition:.15s}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs button:hover:not(.on){background:var(--gold-bg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;color:var(--navy);font-weight:bold;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:4px}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--border-d);border-radius:6px;background:#fff;font-size:16px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,0.18)}
+.field .hint{color:var(--muted);font-size:11px;margin-top:3px}
+.kpi{background:#fff;border:1px solid var(--border);border-top:3px solid var(--blue);border-radius:6px;padding:13px 15px}
+.kpi.gold{border-top-color:var(--gold)}.kpi.green{border-top-color:var(--green)}
+.kpi .label{font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);font-weight:bold;margin-bottom:3px}
+.kpi .value{font-size:24px;font-weight:bold;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.line{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid var(--line)}
+.line .v{font-weight:bold;font-variant-numeric:tabular-nums;color:var(--navy)}
+.line.neg .v{color:var(--red)}
+.line.tot{border-top:2px solid var(--navy);font-size:14px}
+.note{background:#F0F7FB;border-left:4px solid var(--blue);border-radius:4px;padding:12px 16px;font-size:13px;line-height:1.6;margin-top:12px}
+.note.amber{background:var(--amber-bg);border-left-color:var(--amber)}
+.note.green{background:var(--green-bg);border-left-color:var(--green)}
+.footer{margin-top:24px;padding:18px;color:var(--muted);font-size:11.5px;text-align:center;border-top:1px solid var(--border);line-height:1.7}
+.footer strong{color:var(--navy)}
+.money{transition:filter .12s}
+body.privacy-on .money{filter:blur(7px);-webkit-filter:blur(7px);user-select:none}
+body.privacy-on input{filter:blur(6px);-webkit-filter:blur(6px)}
+body.privacy-on input:focus{filter:none;-webkit-filter:none}
+/* Marginal chart privacy: hide the YOU marker and swap to the full curve so the line does not reveal where you sit */
+.chart-blur-note{display:none;position:absolute;top:8px;right:12px;font-size:11px;font-style:italic;color:var(--gold-d);background:rgba(255,255,255,0.9);padding:3px 9px;border-radius:6px;max-width:180px;text-align:right}
+.marginal-line-full{display:none}
+body.privacy-on .chart-blur-note{display:block}
+body.privacy-on .marginal-line,body.privacy-on .you-marker{display:none}
+body.privacy-on .marginal-line-full{display:inline}
+@media(max-width:680px){.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.head-tag{display:none}.head-inner{padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top,0px))}.wrap{padding:0 12px}.tabs button{min-width:0;font-size:12.5px;padding:10px 6px}}
+</style>
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KEEP">
+<meta name="mobile-web-app-capable" content="yes">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').then(function(reg) {
+      console.log('KEEP service worker registered, scope:', reg.scope);
+    }).catch(function(err) {
+      console.log('KEEP service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</head>
+<body>
+<header>
+  <div class="head-inner">
+    <div>
+      <span class="keep-logo"><span class="k">K</span><span class="rest">EEP</span></span>
+      <span class="head-by">by AIFP</span>
+      <div class="head-tag">See what you actually keep</div>
+    </div>
+    <div class="head-right"><button class="privacy-toggle" id="privacyBtn" onclick="togglePrivacy()" aria-label="Hide amounts"></button></div>
+  </div>
+</header>
+<main>
+<div class="wrap">
+  <div class="intro">
+    <div class="crumb">KEEP by AI Finance Partners</div>
+    <p>Your gross salary is rarely what you keep. KEEP shows your real take home on UK 2026/27 rules, how a company director can pay themselves, and how cheap a pension really is once tax relief is counted. Nothing leaves your device.</p>
+  </div>
+
+  <div class="tabs">
+    <button id="tab_th" class="on" onclick="setTab('th')">Take home</button>
+    <button id="tab_dir" onclick="setTab('dir')">Director mode</button>
+    <button id="tab_pen" onclick="setTab('pen')">Pension top-up</button>
+  </div>
+
+  <!-- TAKE HOME -->
+  <div id="pane_th">
+    <div class="card">
+      <h2 style="margin-bottom:12px">Your pay</h2>
+      <div class="grid2">
+        <div class="field"><label>Gross annual salary (&pound;)</label><input type="number" id="in_gross" step="500" oninput="upd()"></div>
+        <div class="field"><label>Student loan plan</label><select id="in_plan" oninput="upd()"><option value="none">None</option><option value="plan1">Plan 1</option><option value="plan2">Plan 2</option><option value="plan4">Plan 4 (Scotland)</option><option value="plan5">Plan 5</option><option value="postgrad">Postgraduate</option></select></div>
+        <div class="field"><label>Workplace pension (% of salary)</label><input type="number" id="in_pension" step="0.5" min="0" max="100" oninput="upd()"><div class="hint">Net pay arrangement. Reduces taxable income.</div></div>
+        <div class="field"><label>Salary sacrifice (%)</label><input type="number" id="in_salsac" step="0.5" min="0" max="100" oninput="upd()"><div class="hint">Cuts pay before tax AND National Insurance.</div></div>
+      </div>
+    </div>
+    <div class="grid3" id="thKpis"></div>
+    <div class="card"><h3 style="margin-bottom:8px">Where it goes</h3><div id="thBreak"></div></div>
+    <div class="card">
+      <h2 style="margin-bottom:4px">Your marginal tax rate</h2>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:0">Income tax jumps from 20% to 40% at &pound;50,270, then hides a trap: between &pound;100,000 and &pound;125,140 your tax-free allowance disappears and the rate hits 60%. The gold dot is you.</p>
+      <div id="chartBox"></div>
+    </div>
+  </div>
+
+  <!-- DIRECTOR -->
+  <div id="pane_dir" style="display:none">
+    <div class="card">
+      <h2 style="margin-bottom:6px">Pay yourself as a company director</h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:0">A limited company director usually takes a small salary plus dividends. Enter the company profit and KEEP shows the tax efficient split and what reaches your pocket. UK 2026/27.</p>
+      <div class="field" style="max-width:320px"><label>Company profit for the year (&pound;)</label><input type="number" id="in_profit" step="1000" oninput="upd()"><div class="hint">Before any salary or tax.</div></div>
+    </div>
+    <div id="dirKpi"></div>
+    <div class="card"><h3 style="margin-bottom:8px">How you take it</h3><div id="dirBreak"></div></div>
+  </div>
+
+  <!-- PENSION TOP-UP -->
+  <div id="pane_pen" style="display:none">
+    <div class="card">
+      <h2 style="margin-bottom:6px">How much more could you put in?</h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:0">A pound in your pension costs you far less than a pound, because of tax relief and any employer match. This shows what you put in now, and what committing a bit more each month would really cost and become.</p>
+      <div class="grid2">
+        <div class="field"><label>Employer matches (% of salary)</label><input type="number" id="in_employer" step="0.5" min="0" max="100" oninput="upd()"><div class="hint">Free money. Grab the full match.</div></div>
+        <div class="field"><label>I could commit this much MORE per month (&pound;)</label><input type="number" id="in_extra" step="25" min="0" oninput="upd()"></div>
+      </div>
+    </div>
+    <div id="penOut"></div>
+  </div>
+
+  <div class="footer">
+    <strong>KEEP by AI Finance Partners</strong> &middot; Built by a CIMA Chartered Management Accountant &middot; UK 2026/27 rates<br>
+    An educational estimate, not personal tax advice. Figures assume England/Wales/NI tax bands, a £12,570 director salary with no Employment Allowance, and the usual net pay pension arrangement. Your own position can change the answer.<br>
+    Want the full picture across your whole financial life? Ask AI Finance Partners about KNOW.
+  </div>
+</div>
+</main>
+
+<script>
+/* ===== KEEP - UK 2026/27 take home, director, pension relief ===== */
+var TAX={ pa:12570, taper:100000, basicBand:37700, addStart:125140, basic:0.20, higher:0.40, additional:0.45,
+  nicPT:12570, nicUEL:50270, nicMain:0.08, nicAdd:0.02,
+  divAllow:500, div:[0.0875,0.3375,0.3935], erThresh:5000, erRate:0.15,
+  corpSmall:0.19, corpMain:0.25, corpSmallThr:50000, corpMargUpper:250000, salary:12570,
+  sl:{ none:{thr:Infinity,rate:0}, plan1:{thr:25000,rate:0.09}, plan2:{thr:27295,rate:0.09}, plan4:{thr:32745,rate:0.09}, plan5:{thr:25000,rate:0.09}, postgrad:{thr:21000,rate:0.06} } };
+
+function paFor(inc){ return inc>TAX.taper ? Math.max(0,TAX.pa-(inc-TAX.taper)/2) : TAX.pa; }
+function incomeTax(inc){ var pa=paFor(inc), t=Math.max(0,inc-pa), hi=TAX.addStart-pa, tax=0; tax+=Math.min(t,TAX.basicBand)*TAX.basic; tax+=Math.max(0,Math.min(t,hi)-TAX.basicBand)*TAX.higher; tax+=Math.max(0,t-hi)*TAX.additional; return tax; }
+function eeNIC(g){ var n=0; if(g>TAX.nicPT)n+=(Math.min(g,TAX.nicUEL)-TAX.nicPT)*TAX.nicMain; if(g>TAX.nicUEL)n+=(g-TAX.nicUEL)*TAX.nicAdd; return n; }
+function studentLoan(g,plan){ var p=TAX.sl[plan]||TAX.sl.none; return g>p.thr ? (g-p.thr)*p.rate : 0; }
+function takeHome(gross,pensionPct,salSacPct,plan){
+  var salSac=gross*(salSacPct/100), gAfter=gross-salSac, pension=gAfter*(pensionPct/100);
+  var taxableInc=gAfter-pension;                 // net pay pension reduces taxable income (not NIC)
+  var it=incomeTax(taxableInc), nic=eeNIC(gAfter), sl=studentLoan(gAfter,plan);
+  var net=gAfter-it-nic-sl-pension;
+  return { net:net, it:it, nic:nic, sl:sl, pension:pension, salSac:salSac, pensionTotal:pension+salSac, gross:gross, gAfter:gAfter };
+}
+function corpTax(p){ if(p<=0)return 0; if(p<=TAX.corpSmallThr)return p*TAX.corpSmall; if(p>=TAX.corpMargUpper)return p*TAX.corpMain; return p*TAX.corpMain-(TAX.corpMargUpper-p)*(3/200); }
+function divTax(nonDiv,dividends){ var tot=nonDiv+dividends,pa=paFor(tot),sb=Math.max(0,nonDiv-pa),rp=Math.max(0,pa-nonDiv),da=Math.max(0,dividends-rp),lo=sb+Math.min(da,TAX.divAllow),up=sb+da,bt=TAX.basicBand,ht=TAX.addStart-pa,tax=0; tax+=Math.max(0,Math.min(up,bt)-lo)*TAX.div[0]; tax+=Math.max(0,Math.min(up,ht)-Math.max(lo,bt))*TAX.div[1]; tax+=Math.max(0,up-Math.max(lo,ht))*TAX.div[2]; return tax; }
+function director(profit){ var sal=TAX.salary, er=Math.max(0,sal-TAX.erThresh)*TAX.erRate, preCT=Math.max(0,profit-sal-er), ct=corpTax(preCT), dividends=Math.max(0,preCT-ct), dt=divTax(sal,dividends), net=sal+(dividends-dt); return { net:net, salary:sal, dividends:dividends, employerNIC:er, corpTax:ct, divTax:dt }; }
+function taxMarginal(sal){ if(sal<=TAX.pa)return 0; if(sal<=TAX.pa+TAX.basicBand)return 0.20; if(sal<=100000)return 0.40; if(sal<=125140)return 0.60; return 0.45; }
+function nicMarginal(sal){ if(sal<=TAX.pa)return 0; if(sal<=TAX.nicUEL)return TAX.nicMain; return TAX.nicAdd; }
+
+/* ===== state ===== */
+var State={ gross:0, plan:'none', pensionPct:5, salSacPct:0, profit:60000, employerPct:3, extra:100, tab:'th', privacy:false };
+function load(){ try{ var s=localStorage.getItem('keep_v1'); if(s) State=Object.assign(State,JSON.parse(s)); }catch(e){} }
+function save(){ try{ localStorage.setItem('keep_v1',JSON.stringify(State)); }catch(e){} }
+load();
+
+function fmt(n){ if(n==null||isNaN(n))return '<span class="money">&pound;0</span>'; return '<span class="money">&pound;'+Math.round(n).toLocaleString('en-GB')+'</span>'; }
+function fmtN(n,neg){ return n<0||neg ? '<span class="money">-&pound;'+Math.abs(Math.round(n)).toLocaleString('en-GB')+'</span>' : fmt(n); }
+function pct(n){ return (isNaN(n)?0:n).toFixed(1)+'%'; }
+function gv(id){ var e=document.getElementById(id); return e?e.value:''; }
+function gn(id){ return parseFloat(gv(id))||0; }
+function line(lbl,val,cls){ return '<div class="line '+(cls||'')+'"><span>'+lbl+'</span><span class="v">'+val+'</span></div>'; }
+
+function setTab(t){ State.tab=t; save();
+  ['th','dir','pen'].forEach(function(x){ document.getElementById('tab_'+x).classList.toggle('on',x===t); document.getElementById('pane_'+x).style.display = x===t?'block':'none'; });
+}
+function upd(){
+  State.gross=gn('in_gross'); State.plan=gv('in_plan'); State.pensionPct=gn('in_pension'); State.salSacPct=gn('in_salsac');
+  State.profit=gn('in_profit'); State.employerPct=gn('in_employer'); State.extra=gn('in_extra');
+  save(); recompute();
+}
+
+/* ===== marginal tax rate chart (equal sections; line hides under Private mode) ===== */
+function chartHTML(gross){
+  var bounds=[0,12570,50270,100000,125140,150000];
+  function mAt(g){ if(g<12570)return 0; if(g<50270)return 20; if(g<100000)return 40; if(g<125140)return 60; return 45; }
+  var W=720,H=300,padL=46,padR=18,padT=20,padB=46, plotW=W-padL-padR, segW=plotW/5, maxM=65;
+  function sx(g){ var gg=Math.max(0,Math.min(g,bounds[5])); for(var i=0;i<5;i++){ if(gg<=bounds[i+1]) return padL+(i+(gg-bounds[i])/(bounds[i+1]-bounds[i]))*segW; } return padL+5*segW; }
+  function sy(m){ return H-padB-(m/maxM)*(H-padT-padB); }
+  var bands=[['Tax free','rgba(107,114,128,0.10)',0,12570],['Basic 20%','rgba(16,185,129,0.14)',12570,50270],['Higher 40%','rgba(46,117,182,0.16)',50270,100000],['60% trap','rgba(239,68,68,0.22)',100000,125140],['Additional 45%','rgba(245,158,11,0.22)',125140,150000]];
+  var s='';
+  bands.forEach(function(b){ var x=sx(b[2]), w=sx(b[3])-sx(b[2]); s+='<rect x="'+x+'" y="'+padT+'" width="'+w+'" height="'+(H-padT-padB)+'" fill="'+b[1]+'"></rect><text x="'+(x+w/2)+'" y="'+(padT+13)+'" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#374151">'+b[0]+'</text>'; });
+  for(var m=0;m<=60;m+=10){ var y=sy(m); s+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#E5E7EB" stroke-width="0.5"></line><text x="'+(padL-6)+'" y="'+(y+3)+'" text-anchor="end" font-size="10" fill="#6B7280">'+m+'%</text>'; }
+  [[0,'£0'],[12570,'£12.5k'],[50270,'£50k'],[100000,'£100k'],[125140,'£125k+']].forEach(function(t){ s+='<text x="'+sx(t[0])+'" y="'+(H-padB+15)+'" text-anchor="middle" font-size="10" fill="#6B7280">'+t[1]+'</text>'; });
+  var pts=[]; for(var g=0;g<=bounds[5];g+=500) pts.push([g,mAt(g)]);
+  var lineEnd=gross>0?Math.min(gross,bounds[5]):bounds[5];
+  var clip=pts.filter(function(p){return p[0]<=lineEnd;}).map(function(p,i){return (i===0?'M':'L')+sx(p[0])+' '+sy(p[1]);}).join(' ');
+  if(gross>0) clip+=' L'+sx(lineEnd)+' '+sy(mAt(gross));
+  var full=pts.map(function(p,i){return (i===0?'M':'L')+sx(p[0])+' '+sy(p[1]);}).join(' ');
+  var marker = gross>0 ? '<g class="you-marker"><line x1="'+sx(gross)+'" y1="'+padT+'" x2="'+sx(gross)+'" y2="'+(H-padB)+'" stroke="#1F3864" stroke-width="2" stroke-dasharray="4,3"></line><circle cx="'+sx(gross)+'" cy="'+sy(mAt(gross))+'" r="6" fill="#C9A227" stroke="#1F3864" stroke-width="2"></circle><text x="'+sx(gross)+'" y="12" text-anchor="middle" font-size="11" fill="#1F3864" font-weight="bold">YOU</text></g>' : '';
+  return '<div style="position:relative"><div class="chart-blur-note">Where you sit is hidden while amounts are blurred</div>'+
+    '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">'+s+
+    '<path class="marginal-line" d="'+clip+'" fill="none" stroke="#1F3864" stroke-width="2.5"></path>'+
+    '<path class="marginal-line-full" d="'+full+'" fill="none" stroke="#1F3864" stroke-width="2.5"></path>'+marker+'</svg></div>';
+}
+
+/* ===== render ===== */
+function recompute(){
+  // Take home
+  var r=takeHome(State.gross,State.pensionPct,State.salSacPct,State.plan);
+  var totalDeduct=r.it+r.nic+r.sl, effRate=State.gross>0?((r.it+r.nic+r.sl)/State.gross*100):0;
+  document.getElementById('thKpis').innerHTML=
+    '<div class="kpi gold"><div class="label">Take home / month</div><div class="value">'+fmt(r.net/12)+'</div><div class="sub">'+fmt(r.net)+' a year</div></div>'+
+    '<div class="kpi"><div class="label">Lost to tax + NI</div><div class="value">'+fmt(totalDeduct+r.sl)+'</div><div class="sub">'+pct(effRate)+' of your salary</div></div>'+
+    '<div class="kpi green"><div class="label">Into your pension</div><div class="value">'+fmt(r.pensionTotal)+'</div><div class="sub">a year, you + sacrifice</div></div>';
+  document.getElementById('thBreak').innerHTML=
+    line('Gross salary',fmt(State.gross))+
+    (r.salSac>0?line('Salary sacrifice to pension',fmtN(-r.salSac),'neg'):'')+
+    line('Income tax',fmtN(-r.it),'neg')+
+    line('National Insurance',fmtN(-r.nic),'neg')+
+    (r.sl>0?line('Student loan',fmtN(-r.sl),'neg'):'')+
+    line('Workplace pension',fmtN(-r.pension),'neg')+
+    line('<b>Take home</b>',fmt(r.net),'tot');
+  document.getElementById('chartBox').innerHTML=chartHTML(State.gross);
+
+  // Director
+  var d=director(State.profit);
+  document.getElementById('dirKpi').innerHTML='<div class="kpi gold" style="margin-bottom:16px"><div class="label">In your pocket</div><div class="value" style="font-size:28px">'+fmt(d.net)+'</div><div class="sub">from '+fmt(State.profit)+' of company profit</div></div>';
+  document.getElementById('dirBreak').innerHTML=
+    line('Director salary',fmt(d.salary))+
+    line('Dividends',fmt(d.dividends))+
+    line('Employer NIC',fmtN(-d.employerNIC),'neg')+
+    line('Corporation tax',fmtN(-d.corpTax),'neg')+
+    line('Dividend tax',fmtN(-d.divTax),'neg')+
+    line('<b>Take home</b>',fmt(d.net),'tot');
+
+  // Pension top-up
+  var sal=State.gross;
+  var currentGrossYr=sal*(State.pensionPct/100), employerYr=sal*(State.employerPct/100);
+  var mt=taxMarginal(sal), nm=nicMarginal(sal);                 // salary sacrifice assumed (saves tax + NIC)
+  var extraGrossYr=State.extra*12, extraNetMo=State.extra*(1-mt-nm), extraNetYr=extraNetMo*12;
+  var newIntoPot=currentGrossYr+employerYr+extraGrossYr;
+  var rMo=0.05/12, n=240, fv=rMo>0?State.extra*((Math.pow(1+rMo,n)-1)/rMo):State.extra*n;
+  var reliefPct=(mt+nm)*100;
+  document.getElementById('penOut').innerHTML=
+    '<div class="grid3" style="margin-bottom:14px">'+
+      '<div class="kpi"><div class="label">You put in now</div><div class="value">'+fmt(currentGrossYr/12)+'</div><div class="sub">a month, '+State.pensionPct+'% of salary</div></div>'+
+      '<div class="kpi green"><div class="label">Employer adds</div><div class="value">'+fmt(employerYr/12)+'</div><div class="sub">a month, free money</div></div>'+
+      '<div class="kpi gold"><div class="label">Extra costs you</div><div class="value">'+fmt(extraNetMo)+'</div><div class="sub">a month, for '+fmt(State.extra)+' in</div></div>'+
+    '</div>'+
+    '<div class="card"><h3 style="margin-bottom:8px">What committing '+fmt(State.extra)+' more a month does</h3>'+
+      line('Goes into your pension',fmt(extraGrossYr)+' / yr')+
+      line('Actually costs your take home',fmt(extraNetYr)+' / yr')+
+      line('Tax relief you get',pct(reliefPct))+
+      line('<b>Your pension grows by, over 20 years (5% real)</b>',fmt(fv),'tot')+
+      '<div class="note green">Because salary sacrifice saves you '+(mt*100).toFixed(0)+'% income tax and '+(nm*100).toFixed(0)+'% National Insurance, every '+fmt(1)+' you put in only costs you about '+(100-reliefPct).toFixed(0)+'p out of your take home. Always grab the full employer match first, it is free money.</div>'+
+      (sal>100000&&sal<=125140?'<div class="note amber"><b>You are in the &pound;100,000 to &pound;125,140 trap.</b> Here every extra &pound;1 of salary loses 60p to tax and the disappearing Personal Allowance, so a pound into your pension can cost you as little as 40p, and it pulls your salary back below &pound;100,000. This is the best possible place for spare income.</div>':'')+
+    '</div>';
+  applyPrivacy();
+}
+
+/* ===== privacy ===== */
+var EYE_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function togglePrivacy(){ State.privacy=!State.privacy; save(); applyPrivacy(); }
+function applyPrivacy(){
+  document.body.classList.toggle('privacy-on',State.privacy);
+  var b=document.getElementById('privacyBtn');
+  b.classList.toggle('on',State.privacy);
+  b.innerHTML=(State.privacy?EYE_OFF:EYE_ON)+'<span>'+(State.privacy?'Hidden':'Hide &pound;')+'</span>';
+  b.title=State.privacy?'Amounts hidden, tap to show':'Hide all amounts';
+}
+
+/* ===== boot ===== */
+document.getElementById('in_gross').value=State.gross;
+document.getElementById('in_plan').value=State.plan;
+document.getElementById('in_pension').value=State.pensionPct;
+document.getElementById('in_salsac').value=State.salSacPct;
+document.getElementById('in_profit').value=State.profit;
+document.getElementById('in_employer').value=State.employerPct;
+document.getElementById('in_extra').value=State.extra;
+setTab(State.tab);
+applyPrivacy();
+recompute();
+</script>
+</body>
+</html>
